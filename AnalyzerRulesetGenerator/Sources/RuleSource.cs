@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using AnalyzerRulesetGenerator.Xml;
-using HtmlAgilityPack;
 
 namespace AnalyzerRulesetGenerator.Sources
 {
@@ -15,9 +16,9 @@ namespace AnalyzerRulesetGenerator.Sources
 
         public abstract string SectionName { get; }
 
-        public abstract IEnumerable<AnalyzerRule> GetRules(HtmlDocument html);
+        public abstract IEnumerable<AnalyzerRule> GetRules(string document);
 
-        public AnalyzerSettingSection GetSection()
+        public async Task<AnalyzerSettingSection> GetSection()
         {
             var section = new AnalyzerSettingSection
             {
@@ -25,8 +26,8 @@ namespace AnalyzerRulesetGenerator.Sources
                 RulesetName = AnalyzerId
             };
 
-            var web = new HtmlWeb();
-            var doc = web.Load(Uri);
+            var doc = await (await new HttpClient().GetAsync(Uri))
+                .Content.ReadAsStringAsync();
 
             foreach(var rule in GetRules(doc))
                 section.Rules.Add(rule);

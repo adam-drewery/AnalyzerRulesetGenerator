@@ -1,36 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using AnalyzerRulesetGenerator.Xml;
-using HtmlAgilityPack;
 
-namespace AnalyzerRulesetGenerator.Sources.Stylecop
+namespace AnalyzerRulesetGenerator.Sources.Stylecop;
+
+public abstract partial class StylecopRuleSource : RuleSource
 {
-    public abstract class StylecopRuleSource : RuleSource
+    public override string AnalyzerId => "Stylecop.Analyzers";
+
+    public override string RuleNamespace => AnalyzerId;
+
+    public override IEnumerable<AnalyzerRule> GetRules(string document)
     {
-        public override string AnalyzerId => "Stylecop.Analyzers";
-
-        public override string RuleNamespace => AnalyzerId;
-
-        public override IEnumerable<AnalyzerRule> GetRules(HtmlDocument html)
-        {
-            var index = 1;
-            var section = new AnalyzerSettingSection();
-            HtmlNodeCollection nodes;
-            do
+        return 
+            from line 
+            in document.Split("\n") 
+            where line.StartsWith('[') 
+            select line.Split(" | ") 
+            into parts 
+            where parts.Length == 3 
+            select new AnalyzerRule
             {
-                nodes = html.DocumentNode.SelectNodes($"//div[2]//article[1]//table[1]//tbody[1]//tr[{index}]//td");
-
-                if (nodes != null)
-                    yield return new AnalyzerRule
-                    {
-                        Id = nodes[0].InnerText,
-                        Name = nodes[1].InnerText,
-                        Action = "Warning",
-                        Description = nodes[2].InnerText
-                    };
-
-                index++;
-            }
-            while (nodes != null);
-        }
+                Id = MyRegex().Match(parts[0]).Groups[1].Value,
+                Name = parts[1],
+                Action = "Warning",
+                Description = parts[2]
+            };
     }
+
+    [GeneratedRegex(@"\[([^\]]+)\]")]
+    private static partial Regex MyRegex();
 }
