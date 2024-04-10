@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AnalyzerRulesetGenerator.Xml;
+using AnalyzerRulesetGenerator.CodeAnalysis;
 
 namespace AnalyzerRulesetGenerator.Sources
 {
     public abstract class RuleSource
     {
+        private HttpClient _http = new HttpClient();
+        
         public abstract Uri Uri { get; }
 
         public abstract string AnalyzerId { get; }
@@ -26,7 +28,9 @@ namespace AnalyzerRulesetGenerator.Sources
                 RulesetName = AnalyzerId
             };
 
-            var doc = await (await new HttpClient().GetAsync(Uri))
+            _http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+            
+            var doc = await (await _http.GetAsync(Uri))
                 .Content.ReadAsStringAsync();
 
             foreach(var rule in GetRules(doc))

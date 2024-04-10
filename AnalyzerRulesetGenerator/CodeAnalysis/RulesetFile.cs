@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace AnalyzerRulesetGenerator.Xml
+namespace AnalyzerRulesetGenerator.CodeAnalysis
 {
     class RulesetFile
     {

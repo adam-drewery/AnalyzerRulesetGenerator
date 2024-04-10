@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AnalyzerRulesetGenerator.Xml;
+using AnalyzerRulesetGenerator.CodeAnalysis;
 
 namespace AnalyzerRulesetGenerator.Sources.Stylecop;
 
@@ -14,12 +14,12 @@ public abstract partial class StylecopRuleSource : RuleSource
     public override IEnumerable<AnalyzerRule> GetRules(string document)
     {
         return 
-            from line 
-            in document.Split("\n") 
-            where line.StartsWith('[') 
-            select line.Split(" | ") 
-            into parts 
-            where parts.Length == 3 
+            from line
+            in document.Split("\n")
+            where line.StartsWith('[')
+            select line.Split(" | ")
+            into parts
+            where parts.Length == 3
             select new AnalyzerRule
             {
                 Id = MyRegex().Match(parts[0]).Groups[1].Value,

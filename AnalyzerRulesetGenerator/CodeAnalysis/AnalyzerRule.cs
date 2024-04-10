@@ -1,4 +1,4 @@
-﻿namespace AnalyzerRulesetGenerator.Xml
+﻿namespace AnalyzerRulesetGenerator.CodeAnalysis
 {
     public class AnalyzerRule
     {

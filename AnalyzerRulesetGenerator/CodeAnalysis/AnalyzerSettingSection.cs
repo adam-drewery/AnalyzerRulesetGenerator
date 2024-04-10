@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AnalyzerRulesetGenerator.Xml
+namespace AnalyzerRulesetGenerator.CodeAnalysis
 {
     public class AnalyzerSettingSection
     {
